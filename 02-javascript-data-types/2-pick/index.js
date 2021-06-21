@@ -6,12 +6,9 @@
  */
 export const pick = (obj, ...fields) => {
   const bufObj = {...obj};
-  let bufArr = Object.entries(bufObj);
-  const fieldsArr = [...fields];
-  bufArr = bufArr.map(el => {
-    let ind = fieldsArr.findIndex(el1 => el1 === el[0]);
-    if (ind !== -1) {return el;}
-  })
-    .filter(el => el !== undefined);
-  return Object.fromEntries(bufArr);
+  let bufArr = Object.keys(bufObj);
+  bufArr.forEach(el => {
+    if (!fields.includes(el)) {Reflect.deleteProperty(bufObj, el);}
+  });
+  return bufObj;
 };
