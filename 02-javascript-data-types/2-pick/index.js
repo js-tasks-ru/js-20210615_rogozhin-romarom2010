@@ -6,9 +6,18 @@
  */
 export const pick = (obj, ...fields) => {
   const bufObj = {...obj};
-  let bufArr = Object.keys(bufObj);
+  const bufArr = Object.keys(bufObj);
   bufArr.forEach(el => {
     if (!fields.includes(el)) {Reflect.deleteProperty(bufObj, el);}
   });
   return bufObj;
+  /*
+  * const result ={}
+  * for (const [key, value' of Object.entries(obj){
+  *   if(fields.includes(key)){
+  *     result[key] = value;
+  *   }
+  * }
+  * return result;
+  * */
 };
