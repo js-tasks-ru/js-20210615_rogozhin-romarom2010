@@ -5,10 +5,12 @@
  * @returns {object} - returns the new object
  */
 export const pick = (obj, ...fields) => {
-  const bufObj = {...obj};
-  let bufArr = Object.keys(bufObj);
-  bufArr.forEach(el => {
-    if (!fields.includes(el)) {Reflect.deleteProperty(bufObj, el);}
-  });
+  const bufObj = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (fields.includes(key)) {
+      bufObj[key] = value;
+    }
+  }
   return bufObj;
+
 };
