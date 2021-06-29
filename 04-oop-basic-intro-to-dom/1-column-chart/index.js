@@ -1,8 +1,13 @@
 export default class ColumnChart {
   _chartHeight = 50;
 
-  constructor(obj) {
-    const {formatHeading, data, label, value, link} = obj ?? {};
+  constructor({
+                data = [],
+                label = '',
+                link = '',
+                value = 0,
+                formatHeading = data => data,
+              } = {}) {
     this.data = data;
     this.label = label;
     this.value = value;
@@ -37,17 +42,13 @@ export default class ColumnChart {
   }
 
   update(newData) {
-    const bodyChart = this.element.querySelector('div.column-chart__chart');
-    const childrens = bodyChart.children;
-    for (let item of childrens) {
-      item.remove();
-    }
+    this.bodyChart.innerHTML = '';
     const data = this.getColumnProps(newData);
     data.forEach(el => {
       const column = document.createElement('div');
       column.setAttribute('style', `--value: ${el.value}`);
       column.setAttribute('data-tooltip', el.percent);
-      bodyChart.append(column);
+      this.bodyChart.append(column);
     });
   }
 
@@ -55,33 +56,16 @@ export default class ColumnChart {
     const el = document.createElement('div');
     el.className = 'column-chart';
     el.setAttribute('style', `--chart-height: ${this._chartHeight}`);
-    const header = document.createElement('div');
-    header.className = 'column-chart__title';
-    header.textContent = `${this.label ?? ''}`;
     if (this.link) {
-      const link = document.createElement('a');
-      link.className = 'column-chart__link';
-      link.href = this.link;
-      link.innerText = 'View all';
-      header.append(link);
+      el.innerHTML = `<div class="column-chart__title">${this.label ?? ''} <a class="column-chart__link" href=${this.link}>View all</a></div>`;
+    } else {
+      el.innerHTML = `<div class="column-chart__title">${this.label ?? ''}</div>`;
     }
-    el.append(header);
     const body = document.createElement('div');
     body.className = 'column-chart__container';
-
-    const bodyHeader = document.createElement('div');
-    bodyHeader.className = 'column-chart__header';
-    bodyHeader.setAttribute('data-element', 'header');
-    if (this.formatHeading != null) {
-      bodyHeader.textContent = this.formatHeading(this.value);
-    } else {
-      bodyHeader.textContent = this.value ?? '';
-    }
-    body.append(bodyHeader);
-    const bodyChart = document.createElement('div');
-    bodyChart.className = 'column-chart__chart';
-    bodyChart.setAttribute('data-element', 'body');
-
+    body.innerHTML = `<div data-element="header" class="column-chart__header">${this.formatHeading != null ? this.formatHeading(this.value) : this.value ?? ''}</div>
+        <div data-element="body" class="column-chart__chart"></div>`;
+    const bodyChart = body.querySelector('.column-chart__chart');
     if (!this.isLoading()) {
       const bufData = this.getColumnProps(this.data);
       bufData.forEach(el => {
@@ -93,8 +77,8 @@ export default class ColumnChart {
     } else {
       el.className = 'column-chart column-chart_loading';
     }
+    this.bodyChart = bodyChart;
     body.append(bodyChart);
-
     el.append(body);
     this.element = el;
   }

@@ -5,11 +5,11 @@
  */
 export function createGetter(path) {
   const arr = path.split('.');
-  return (obj => {
+  return obj => {
     if (Object.keys(obj).length === 0) {return;}
     for (let item of arr) {
       obj = obj[item] === undefined ? undefined : obj[item];
     }
     return obj;
-  });
+  };
 }
